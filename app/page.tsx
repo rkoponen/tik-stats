@@ -7,9 +7,10 @@ import { json } from 'stream/consumers';
 import BarChart from './components/barChart';
 import type { BarChartProps } from './components/barChart';
 import JSZip from 'jszip';
-import { DateCountMap } from './types/dateCountMap';
-import { reverseData } from './utils/dataUtils';
+import { DateCountArray } from './types/dateCountArray';
+import { calculateTotalCount, getMaxViews, reverseData } from './utils/dataUtils';
 import { computeDailyCounts, getLatestMonth, getMonthlyData } from './utils/dateUtils';
+import { ChartOptions } from 'chart.js';
 
 enum Months {
   January,
@@ -34,14 +35,24 @@ export default function Home() {
   const [chartData, setChartData] = useState<BarChartProps['data'] | null>(null)
   const [averageDailyCount, setAverageDailyCount] = useState<number | null>(null);
   const [month, setMonth] = useState<number | null>(null);
+  const [chartOptions, setChartOptions] = useState<ChartOptions<"bar">>({
+      scales: {
+          y: {
+            suggestedMax: 0
+          },
+        },
+    })
+  const [dailyCounts, setDailyCounts] = useState<DateCountArray | null>(null);
 
   useEffect(() => {
     if (videoHistory) {
       const dailyCounts = computeDailyCounts(videoHistory);
       if (dailyCounts) {
-        const totalCount = Object.values(dailyCounts).reduce((sum, count) => sum + count, 0);
-        const averageCount = totalCount / Object.keys(dailyCounts).length
+        setDailyCounts(dailyCounts)
+        const totalCount = calculateTotalCount(dailyCounts);
+        const averageCount = totalCount / dailyCounts.length;
         const latestMonth = getLatestMonth(dailyCounts);
+        getMaxViews(dailyCounts)
         setAverageDailyCount(averageCount)
         if (latestMonth){ 
           setMonth(latestMonth);
@@ -78,31 +89,46 @@ export default function Home() {
 
 
 
-  const updateChartData = (data: DateCountMap, month: number) => {
-    const reversedDailyCounts = reverseData(data);
+  const updateChartData = (data: DateCountArray, month: number) => {
+    const dates = data.map(pair => pair.date.toLocaleDateString('fi-FI'));
+    const counts = data.map(pair => pair.count);
+
 
     setChartData({
-      labels: Object.keys(reversedDailyCounts),
+      labels: dates,
       datasets: [
         {
           label: Months[month],
-          data: Object.values(reversedDailyCounts),
+          data: counts,
           backgroundColor: '#00f2ea',
           borderColor: "#ff0050",
           borderWidth: 1,
         }
-      ]
-    });
+      ],
+    },
+    );
+    if (dailyCounts) {
+      const newChartOptions: ChartOptions<"bar"> = {
+        scales: {
+          y: {
+            suggestedMax: getMaxViews(dailyCounts),
+          },
+        },
+      };
+  
+      setChartOptions(newChartOptions);
+    }
+    
   }
 
   const ResultWidget = () => {
-    if (files && likeList && videoHistory && chartData && averageDailyCount) {
+    if (files && likeList && videoHistory && chartData && averageDailyCount && chartOptions) {
       return (
         <div>
           <p>You have watched {videoHistory.length} Tiktoks</p>
           <p>You have liked {likeList.length} TikToks</p>
           <p>On average, you have watched {Math.round(averageDailyCount)} TikToks daily</p>
-          <BarChart data={chartData}/>
+          <BarChart data={chartData} options={chartOptions}/>
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleClickPrevious}>Previous month</button>
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-5" onClick={handleClickNext}>Next month</button>
           <p>{month}</p>

@@ -1,49 +1,37 @@
-import { DateCountMap } from "../types/dateCountMap";
+import { DateCount, DateCountArray } from "../types/dateCountArray";
 import { VideoBrowsingHistoryItem } from "../types/jsonInterfaces";
 
-export const computeDailyCounts = (videoHistory: VideoBrowsingHistoryItem[]): DateCountMap | null => {
+export const computeDailyCounts = (videoHistory: VideoBrowsingHistoryItem[]): DateCountArray | null => {
   if (videoHistory) {
-    const counts: { [date: string]: number } = {};
+    const dateCountMap: Map<string, DateCount> = new Map();
 
-    videoHistory.forEach(video => {
-      const dateKey = new Date(video.Date).toISOString().split("T")[0];
-      counts[dateKey] = (counts[dateKey] || 0) + 1;
-    });
-    return counts;
+  videoHistory.forEach(video => {
+    const date = new Date(video.Date);
+    const formattedDateKey = date.toISOString().split("T")[0];
+    const existingPair = dateCountMap.get(formattedDateKey);
+
+    if (existingPair) {
+      existingPair.count += 1;
+    } else {
+      dateCountMap.set(formattedDateKey, { date, count: 1 });
+    }
+});
+
+const dateCountPairs = Array.from(dateCountMap.values());
+    return dateCountPairs;
   } else {
     return null;
   }
 }
 
-export const getMonthlyData = (data: DateCountMap, month: number): DateCountMap => {
+export const getMonthlyData = (data: DateCountArray, month: number): DateCountArray => {
   console.log(`Month from monthlyData: ${month}`)
-  const monthlyData: { [date: string]: number }= {};
-  for (const dateKey in data) {
-    const currentDate = new Date(dateKey);
-    if (currentDate.getMonth() == month) {
-      monthlyData[dateKey] = data[dateKey]
-    }
-  }
-  console.log(monthlyData)
-  return monthlyData
+  return data.filter(pair => pair.date.getMonth() === month)
 }
 
-export const getLatestMonth = (data: DateCountMap): number | null => {
-  let latestDate: Date | null = null;
-  let foundValidDate = false;
-
-  for (const dateKey in data) {
-    const currentDate = new Date(dateKey);
-    if (!foundValidDate || (latestDate && currentDate > latestDate)) {
-      latestDate = currentDate;
-      foundValidDate = true;
-    }
-  }
-  if (latestDate) {
-    const monthNumber = new Date(latestDate).getMonth()
-    return monthNumber
-  } else {
-    return null;
-  }
+export const getLatestMonth = (data: DateCountArray): number | null => {
+  console.log(data.map(pair => pair.date.getMonth()))
+  const months = data.map(pair => pair.date.getMonth())
+  return Math.max(...months);
 }
 

@@ -1,12 +1,13 @@
-import { DateCountMap } from "../types/dateCountMap"
+import { DateCountArray, DateCount } from "../types/dateCountArray"
 
-export const reverseData = (data: DateCountMap): DateCountMap => {
-  const reversedArray = Object.entries(data).reverse();
+export const reverseData = (data: DateCountArray): DateCountArray => {
+  return data.reverse();
+}
 
-    const reversedMap: DateCountMap = {};
-    reversedArray.forEach(([date, count]) => {
-      reversedMap[date] = count;
-  })
+export const getMaxViews = (data: DateCountArray): number => {
+  return Math.max(...data.map(pair => pair.count))
+}
 
-  return reversedMap;
+export const calculateTotalCount = (data: DateCountArray): number => {
+  return data.reduce((total, pair) => total + pair.count, 0);
 }
