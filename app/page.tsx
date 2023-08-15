@@ -90,10 +90,10 @@ export default function Home() {
 
 
   const updateChartData = (data: DateCountArray, month: number) => {
-    const dates = data.map(pair => pair.date.toLocaleDateString('fi-FI'));
-    const counts = data.map(pair => pair.count);
-
-
+    const dataReveresed = data.reverse();
+    const dates = dataReveresed.map(pair => pair.date.toLocaleDateString('fi-FI'));
+    const counts = dataReveresed.map(pair => pair.count);
+    
     setChartData({
       labels: dates,
       datasets: [
@@ -130,24 +130,25 @@ export default function Home() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-xl font-semibold text-blue-500 dark:text-blue-300">{videoHistory.length}</p>
-              <p className="text-lg text-gray-700">TikToks Watched</p>
+              <p className="text-xl font-semibold text-blue-500 dark:text-blue-300">{videoHistory.length.toLocaleString('fi-FI')}</p>
+              <p className="text-lg text-gray-700">TikToks Watched (180 days)</p>
             </div>
             <div className="bg-pink-50 p-4 rounded-lg">
-              <p className="text-xl font-semibold text-pink-500 dark:text-pink-300">{likeList.length}</p>
+              <p className="text-xl font-semibold text-pink-500 dark:text-pink-300">{likeList.length.toLocaleString('fi-FI')}</p>
               <p className="text-lg text-gray-700 dark:text-gary-400">TikToks Liked</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-xl font-semibold text-gray-700 dark:text-gray-300">{Math.round(averageDailyCount)}</p>
+              <p className="text-xl font-semibold text-gray-700 dark:text-gray-300">{Math.round(averageDailyCount).toLocaleString('fi-FI')}</p>
               <p className="text-lg text-gray-700 dark:text-gray-300">TikToks Watched Daily (Avg)</p>
             </div>
           </div>
           <div className="w-full">
             <BarChart data={chartData} options={chartOptions}/>
           </div>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleClickPrevious}>Previous month</button>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-5" onClick={handleClickNext}>Next month</button>
-          <p>{month}</p>
+          <div className="flex justify-center my-4">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4" onClick={handleClickPrevious}>&lt; Previous month</button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4" onClick={handleClickNext}>Next month &gt;</button>
+          </div>
         </div>
       )
     }
