@@ -33,6 +33,9 @@ const BarChart: React.FC<BarChartProps> = ({ data, maxVal }) => {
       y: {
         suggestedMax: maxVal,
       },
+      x: {
+        suggestedMax: maxVal,
+      }
     },
   };
 
