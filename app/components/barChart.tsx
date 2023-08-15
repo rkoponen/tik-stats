@@ -25,18 +25,13 @@ const BarChart: React.FC<BarChartProps> = ({ data, maxVal }) => {
   }, [])
   const indexAxis = window.innerWidth > 768 ? 'x' : 'y'
 
+  let scales = windowSize.width > 768 ? { y: { suggestedMax: maxVal }} : { x: { suggestedMax: maxVal } }
+
   const options: ChartOptions<"bar"> = {
     indexAxis: indexAxis,
     responsive: true,
     maintainAspectRatio: false,
-    scales: {
-      y: {
-        suggestedMax: maxVal,
-      },
-      x: {
-        suggestedMax: maxVal,
-      }
-    },
+    scales: scales
   };
 
   return (
