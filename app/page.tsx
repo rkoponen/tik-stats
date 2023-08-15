@@ -35,13 +35,6 @@ export default function Home() {
   const [chartData, setChartData] = useState<BarChartProps['data'] | null>(null)
   const [averageDailyCount, setAverageDailyCount] = useState<number | null>(null);
   const [month, setMonth] = useState<number | null>(null);
-  const [chartOptions, setChartOptions] = useState<ChartOptions<"bar">>({
-      scales: {
-          y: {
-            suggestedMax: 0
-          },
-        },
-    })
   const [dailyCounts, setDailyCounts] = useState<DateCountArray | null>(null);
 
   useEffect(() => {
@@ -107,47 +100,35 @@ export default function Home() {
       ],
     },
     );
-    if (dailyCounts) {
-      const newChartOptions: ChartOptions<"bar"> = {
-        scales: {
-          y: {
-            suggestedMax: getMaxViews(dailyCounts),
-          },
-        },
-      };
-  
-      setChartOptions(newChartOptions);
-    }
-    
   }
 
   const ResultWidget = () => {
-    if (files && likeList && videoHistory && chartData && averageDailyCount && chartOptions) {
+    if (files && likeList && videoHistory && chartData && averageDailyCount && dailyCounts) {
       return (
-        <div>
+        <div className="px-4 md:px-8 lg:px-16">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your TikTok Stats</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-blue-50 p-4 rounded-lg text-center">
               <p className="text-xl font-semibold text-blue-500 dark:text-blue-300">{videoHistory.length.toLocaleString('fi-FI')}</p>
               <p className="text-lg text-gray-700">TikToks Watched (180 days)</p>
             </div>
-            <div className="bg-pink-50 p-4 rounded-lg">
+            <div className="bg-pink-50 p-4 rounded-lg text-center">
               <p className="text-xl font-semibold text-pink-500 dark:text-pink-300">{likeList.length.toLocaleString('fi-FI')}</p>
               <p className="text-lg text-gray-700 dark:text-gary-400">TikToks Liked</p>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg text-center">
               <p className="text-xl font-semibold text-gray-700 dark:text-gray-300">{Math.round(averageDailyCount).toLocaleString('fi-FI')}</p>
               <p className="text-lg text-gray-700 dark:text-gray-300">TikToks Watched Daily (Avg)</p>
             </div>
           </div>
-          <div className="w-full">
-            <BarChart data={chartData} options={chartOptions}/>
+          <div className="mt-8">
+            <BarChart data={chartData} maxVal={getMaxViews(dailyCounts)}/>
           </div>
           <div className="flex justify-center my-4">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4" onClick={handleClickPrevious}>&lt; Previous month</button>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4" onClick={handleClickNext}>Next month &gt;</button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4" onClick={handleClickPrevious}>&lt; Previous</button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4" onClick={handleClickNext}>Next &gt;</button>
           </div>
         </div>
       )
@@ -183,9 +164,9 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-between p-24">
-      <div className="w-3/4">
-        <h1 className="text-4xl mb-4 font-extrabold tracking-tight">TikTok Data</h1>
-        <div>
+      <div>
+        <h1 className="text-4xl mb-4 font-extrabold tracking-tight text-center">TikTok Data</h1>
+        <div className="flex flex-col items-center">
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="file-input">Choose a ZIP File</label>        
           <input 
             className="file:bg-blue-50 file:text-blue-500 hover:file:bg-blue-100 file:rounded-lg file:rounded-tr-none file:rounded-br-none file:px-4 file:py-2 file:mr-4 file:border-none hover:cursor-pointer border rounded-lg text-gray-400"
