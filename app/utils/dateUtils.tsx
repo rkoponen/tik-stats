@@ -7,7 +7,7 @@ export const computeDailyCounts = (videoHistory: VideoBrowsingHistoryItem[]): Da
 
   videoHistory.forEach(video => {
     const date = new Date(video.Date);
-    const formattedDateKey = date.toISOString().split("T")[0];
+    const formattedDateKey = date.toDateString();
     const existingPair = dateCountMap.get(formattedDateKey);
 
     if (existingPair) {
@@ -17,7 +17,10 @@ export const computeDailyCounts = (videoHistory: VideoBrowsingHistoryItem[]): Da
     }
 });
 
-const dateCountPairs = Array.from(dateCountMap.values());
+    const dateCountPairs = Array.from(dateCountMap.values());
+    dateCountPairs.forEach(pair => {
+      console.log(`${pair.date}: ${pair.count}`)
+    })
     return dateCountPairs;
   } else {
     return null;
