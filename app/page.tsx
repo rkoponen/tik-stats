@@ -125,10 +125,26 @@ export default function Home() {
     if (files && likeList && videoHistory && chartData && averageDailyCount && chartOptions) {
       return (
         <div>
-          <p>You have watched {videoHistory.length} Tiktoks</p>
-          <p>You have liked {likeList.length} TikToks</p>
-          <p>On average, you have watched {Math.round(averageDailyCount)} TikToks daily</p>
-          <BarChart data={chartData} options={chartOptions}/>
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your TikTok Stats</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <p className="text-xl font-semibold text-blue-500 dark:text-blue-300">{videoHistory.length}</p>
+              <p className="text-lg text-gray-700">TikToks Watched</p>
+            </div>
+            <div className="bg-pink-50 p-4 rounded-lg">
+              <p className="text-xl font-semibold text-pink-500 dark:text-pink-300">{likeList.length}</p>
+              <p className="text-lg text-gray-700 dark:text-gary-400">TikToks Liked</p>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <p className="text-xl font-semibold text-gray-700 dark:text-gray-300">{Math.round(averageDailyCount)}</p>
+              <p className="text-lg text-gray-700 dark:text-gray-300">TikToks Watched Daily (Avg)</p>
+            </div>
+          </div>
+          <div className="w-full">
+            <BarChart data={chartData} options={chartOptions}/>
+          </div>
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleClickPrevious}>Previous month</button>
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-5" onClick={handleClickNext}>Next month</button>
           <p>{month}</p>
@@ -165,11 +181,18 @@ export default function Home() {
 
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="w-full">
-        <form>
-          <input type="file" onChange={handleFileChange} />
-        </form>
+    <main className="flex flex-col items-center justify-between p-24">
+      <div className="w-3/4">
+        <h1 className="text-4xl mb-4 font-extrabold tracking-tight">TikTok Data</h1>
+        <div>
+          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="file-input">Choose a ZIP File</label>        
+          <input 
+            className="file:bg-blue-50 file:text-blue-500 hover:file:bg-blue-100 file:rounded-lg file:rounded-tr-none file:rounded-br-none file:px-4 file:py-2 file:mr-4 file:border-none hover:cursor-pointer border rounded-lg text-gray-400"
+            id="file-input"
+            type="file" 
+            onChange={handleFileChange} />
+          <p className="mt-1 mb-6 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">Upload the ZIP file containing your TikTok data.</p>
+        </div>
         <ResultWidget/>
       </div>
     </main>
