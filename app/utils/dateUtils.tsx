@@ -30,8 +30,12 @@ export const getMonthlyData = (data: DateCountArray, month: number): DateCountAr
 }
 
 export const getLatestMonth = (data: DateCountArray): number | null => {
-  console.log(data.map(pair => pair.date.getMonth()))
   const months = data.map(pair => pair.date.getMonth())
   return Math.max(...months);
+}
+
+export const getEarliestMonth = (data: DateCountArray): number => {
+  const months = data.map(pair => pair.date.getMonth())
+  return Math.min(...months);
 }
 
