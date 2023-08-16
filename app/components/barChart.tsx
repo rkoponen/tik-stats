@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import 'chart.js/auto';
 import {Bar} from "react-chartjs-2";
 import { ChartData, ChartOptions } from "chart.js/auto";
-import { Months } from "../page";
+import { Months } from "../types/months";
 
 export interface BarChartProps {
   data: ChartData<"bar">;
