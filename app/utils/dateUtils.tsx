@@ -18,9 +18,6 @@ export const computeDailyCounts = (videoHistory: VideoBrowsingHistoryItem[]): Da
 });
 
     const dateCountPairs = Array.from(dateCountMap.values());
-    dateCountPairs.forEach(pair => {
-      console.log(`${pair.date}: ${pair.count}`)
-    })
     return dateCountPairs;
   } else {
     return null;
