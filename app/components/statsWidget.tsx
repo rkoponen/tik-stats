@@ -8,6 +8,8 @@ interface StatsWidgetProps {
   month: number;
   chartData: BarChartProps['data'];
   maxVal: number;
+  earliestMonth: number;
+  latestMonth: number;
   handleClickPrevious: (e: React.MouseEvent<HTMLElement>) => void;
   handleClickNext: (e: React.MouseEvent<HTMLElement>) => void;
 }
@@ -19,8 +21,10 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
   month,
   chartData,
   maxVal,
+  earliestMonth,
+  latestMonth,
   handleClickPrevious,
-  handleClickNext
+  handleClickNext,
 }) => {
   return (
     <div>
@@ -45,8 +49,8 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
         <BarChart data={chartData} maxVal={maxVal} month={month}/>
       </div>
       <div className="flex justify-center my-4">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4" onClick={handleClickPrevious}>&lt; Previous</button>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4" onClick={handleClickNext}>Next &gt;</button>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded mr-4 disabled:opacity-50" onClick={handleClickPrevious} disabled={earliestMonth === month}>&lt; Previous</button>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded ml-4 disabled:opacity-50" onClick={handleClickNext} disabled={latestMonth === month}>Next &gt;</button>
       </div>
     </div>
   )

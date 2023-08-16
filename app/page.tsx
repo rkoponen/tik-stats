@@ -9,7 +9,7 @@ import type { BarChartProps } from './components/barChart';
 import JSZip from 'jszip';
 import { DateCountArray } from './types/dateCountArray';
 import { calculateTotalCount, getMaxViews, reverseData } from './utils/dataUtils';
-import { computeDailyCounts, getLatestMonth, getMonthlyData } from './utils/dateUtils';
+import { computeDailyCounts, getEarliestMonth, getLatestMonth, getMonthlyData } from './utils/dateUtils';
 import { ChartOptions } from 'chart.js';
 import { StatsWidget } from './components/statsWidget';
 import { Months } from './types/months';
@@ -22,6 +22,8 @@ export default function Home() {
   const [averageDailyCount, setAverageDailyCount] = useState<number | null>(null);
   const [month, setMonth] = useState<number | null>(null);
   const [dailyCounts, setDailyCounts] = useState<DateCountArray | null>(null);
+  const [earliestMonth, setEarliestMonth] = useState<number | null>(null);
+  const [latestMonth, setLatestMonth] = useState<number | null>(null);
 
   useEffect(() => {
     if (videoHistory) {
@@ -33,16 +35,16 @@ export default function Home() {
         const latestMonth = getLatestMonth(dailyCounts);
         getMaxViews(dailyCounts)
         setAverageDailyCount(averageCount)
-        if (latestMonth){ 
+        if (latestMonth) {
           setMonth(latestMonth);
+          setLatestMonth(latestMonth);
+          setEarliestMonth(getEarliestMonth(dailyCounts))
           const monthlyData = getMonthlyData(dailyCounts, latestMonth);
           updateChartData(monthlyData, latestMonth)
         }
       }
     }
   }, [videoHistory])
-
-
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -114,11 +116,10 @@ export default function Home() {
     }
   }
 
-
   return (
     <main className="flex flex-col items-center justify-between p-24">
       <div className="px-4 md:px-8 lg:px-16">
-        <h1 className="text-4xl mb-4 font-extrabold tracking-tight text-center">TikTok Data</h1>
+        <h1 className="text-4xl mb-4 font-extrabold tracking-tight text-center">TikStats</h1>
         <div className="flex flex-col items-center">
           <label className="block mb-2 text-sm font-medium text-gray-900" htmlFor="file-input">Choose a ZIP File</label>        
           <input 
@@ -128,7 +129,7 @@ export default function Home() {
             onChange={handleFileChange} />
           <p className="mt-1 mb-6 text-sm text-gray-500" id="file_input_help">Upload the ZIP file containing your TikTok data.</p>
         </div>
-        {videoHistory && likeList && chartData && averageDailyCount && month && dailyCounts && (
+        {videoHistory && likeList && chartData && averageDailyCount && month && dailyCounts && earliestMonth && latestMonth && (
           <StatsWidget
             videoHistory={videoHistory}
             likeList={likeList}
@@ -138,6 +139,8 @@ export default function Home() {
             maxVal={getMaxViews(dailyCounts)}
             handleClickPrevious={handleClickPrevious}
             handleClickNext={handleClickNext}
+            earliestMonth={earliestMonth}
+            latestMonth={latestMonth}
           />
         )}
       </div>
