@@ -12,22 +12,7 @@ import { calculateTotalCount, getMaxViews, reverseData } from './utils/dataUtils
 import { computeDailyCounts, getLatestMonth, getMonthlyData } from './utils/dateUtils';
 import { ChartOptions } from 'chart.js';
 import { StatsWidget } from './components/statsWidget';
-
-export enum Months {
-  January,
-  February,
-  March,
-  April,
-  May,
-  June,
-  July,
-  August,
-  September,
-  October,
-  November,
-  December
-}
-
+import { Months } from './types/months';
 
 export default function Home() {
   const [files, setFiles] = useState<ParsedData | null>(null);
@@ -94,7 +79,7 @@ export default function Home() {
         {
           label: Months[month],
           data: counts,
-          backgroundColor: '#d9f99d',
+          backgroundColor: '#a5f3fc',
           borderColor: "black",
           borderWidth: 1,
         }
