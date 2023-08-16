@@ -11,8 +11,9 @@ import { DateCountArray } from './types/dateCountArray';
 import { calculateTotalCount, getMaxViews, reverseData } from './utils/dataUtils';
 import { computeDailyCounts, getLatestMonth, getMonthlyData } from './utils/dateUtils';
 import { ChartOptions } from 'chart.js';
+import { StatsWidget } from './components/statsWidget';
 
-enum Months {
+export enum Months {
   January,
   February,
   March,
@@ -93,46 +94,13 @@ export default function Home() {
         {
           label: Months[month],
           data: counts,
-          backgroundColor: '#00f2ea',
-          borderColor: "#ff0050",
+          backgroundColor: '#d9f99d',
+          borderColor: "black",
           borderWidth: 1,
         }
       ],
     },
     );
-  }
-
-  const ResultWidget = () => {
-    if (files && likeList && videoHistory && chartData && averageDailyCount && dailyCounts) {
-      return (
-        <div className="px-4 md:px-8 lg:px-16">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Your TikTok Stats</h2>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="bg-blue-50 p-4 rounded-lg text-center">
-              <p className="text-xl font-semibold text-blue-500">{videoHistory.length.toLocaleString('fi-FI')}</p>
-              <p className="text-lg text-gray-700">TikToks Watched (180 days)</p>
-            </div>
-            <div className="bg-pink-50 p-4 rounded-lg text-center">
-              <p className="text-xl font-semibold text-pink-500">{likeList.length.toLocaleString('fi-FI')}</p>
-              <p className="text-lg text-gray-700">TikToks Liked</p>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg text-center">
-              <p className="text-xl font-semibold text-gray-700">{Math.round(averageDailyCount).toLocaleString('fi-FI')}</p>
-              <p className="text-lg text-gray-700">TikToks Watched Daily (Avg)</p>
-            </div>
-          </div>
-          <div className="mt-8">
-            <BarChart data={chartData} maxVal={getMaxViews(dailyCounts)}/>
-          </div>
-          <div className="flex justify-center my-4">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4" onClick={handleClickPrevious}>&lt; Previous</button>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4" onClick={handleClickNext}>Next &gt;</button>
-          </div>
-        </div>
-      )
-    }
   }
 
   const handleClickPrevious = (e: React.MouseEvent<HTMLElement>) => {
@@ -164,7 +132,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-between p-24">
-      <div>
+      <div className="px-4 md:px-8 lg:px-16">
         <h1 className="text-4xl mb-4 font-extrabold tracking-tight text-center">TikTok Data</h1>
         <div className="flex flex-col items-center">
           <label className="block mb-2 text-sm font-medium text-gray-900" htmlFor="file-input">Choose a ZIP File</label>        
@@ -175,7 +143,18 @@ export default function Home() {
             onChange={handleFileChange} />
           <p className="mt-1 mb-6 text-sm text-gray-500" id="file_input_help">Upload the ZIP file containing your TikTok data.</p>
         </div>
-        <ResultWidget/>
+        {videoHistory && likeList && chartData && averageDailyCount && month && dailyCounts && (
+          <StatsWidget
+            videoHistory={videoHistory}
+            likeList={likeList}
+            averageDailyCount={averageDailyCount}
+            month={month}
+            chartData={chartData}
+            maxVal={getMaxViews(dailyCounts)}
+            handleClickPrevious={handleClickPrevious}
+            handleClickNext={handleClickNext}
+          />
+        )}
       </div>
     </main>
 
