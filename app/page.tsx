@@ -79,9 +79,9 @@ export default function Home() {
         {
           label: Months[month],
           data: counts,
-          backgroundColor: '#a5f3fc',
+          backgroundColor: '#ec4899',
           borderColor: "black",
-          borderWidth: 1,
+          borderWidth: 0,
         }
       ],
     },
@@ -102,7 +102,7 @@ export default function Home() {
   }
 
   const handleClickNext = (e: React.MouseEvent<HTMLElement>) => {
-    if (month !== null && month < 12) {
+    if (month !== null && month < 11) {
       setMonth(month + 1);
       if (videoHistory) {
         const dailyCounts = computeDailyCounts(videoHistory);
