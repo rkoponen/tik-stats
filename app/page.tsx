@@ -71,9 +71,8 @@ export default function Home() {
 
 
   const updateChartData = (data: DateCountArray, month: number) => {
-    const dataReveresed = data.reverse();
-    const dates = dataReveresed.map(pair => pair.date.toLocaleDateString('fi-FI'));
-    const counts = dataReveresed.map(pair => pair.count);
+    const dates = data.map(pair => pair.date.toLocaleDateString('fi-FI'));
+    const counts = data.map(pair => pair.count);
     
     setChartData({
       labels: dates,
