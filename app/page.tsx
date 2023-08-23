@@ -4,7 +4,7 @@ import { ParsedData, VideoBrowsingHistoryItem, VideoLikeHistoryItem} from './typ
 import type { BarChartProps } from './components/barChart';
 import JSZip from 'jszip';
 import { DateCountArray } from './types/dateCountArray';
-import { calculateTotalCount, getMaxViews, reverseData } from './utils/dataUtils';
+import { calculateTotalCount, calculateWatchTime, getMaxViews, reverseData } from './utils/dataUtils';
 import { computeDailyCounts, getEarliestMonth, getLatestMonth, getMonthlyData } from './utils/dateUtils';
 import { StatsWidget } from './components/statsWidget';
 import { Months } from './types/months';
@@ -37,6 +37,7 @@ export default function Home() {
           const monthlyData = getMonthlyData(dailyCounts, latestMonth);
           updateChartData(monthlyData, latestMonth)
         }
+        calculateWatchTime(videoHistory);
       }
     }
   }, [videoHistory])
@@ -57,7 +58,7 @@ export default function Home() {
           const jsonData: ParsedData = JSON.parse(content);
           if ("Activity" in jsonData) {
             setFiles(jsonData);
-            setVideoHistory(jsonData["Activity"]["Video Browsing History"].VideoList)
+            setVideoHistory(jsonData["Activity"]["Video Browsing History"].VideoList.map((item) => ({...item, Date: new Date(item.Date)})))
             setLikeList(jsonData["Activity"]["Like List"].ItemFavoriteList)
           } else {
             console.log("Invalid json")

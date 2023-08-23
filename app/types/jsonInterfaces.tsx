@@ -4,7 +4,7 @@ export interface VideoLikeHistoryItem {
 }
 
 export interface VideoBrowsingHistoryItem {
-  Date: string;
+  Date: Date;
   Link: string;
 }
 
