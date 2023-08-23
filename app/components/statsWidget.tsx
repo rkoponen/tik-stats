@@ -1,5 +1,6 @@
 import { VideoBrowsingHistoryItem, VideoLikeHistoryItem } from "../types/jsonInterfaces";
 import { Months } from "../types/months";
+import { calculateWatchTime } from "../utils/dataUtils";
 import BarChart, { BarChartProps } from "./barChart";
 
 interface StatsWidgetProps {
@@ -27,12 +28,14 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
   handleClickPrevious,
   handleClickNext,
 }) => {
+  const watchTime = calculateWatchTime(videoHistory);
+
   return (
     <div>
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Your TikTok Stats</h2>
       </div>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <div className="bg-blue-50 p-4 rounded-lg text-center">
           <p className="text-xl font-semibold text-blue-500">{videoHistory.length.toLocaleString('fi-FI')}</p>
           <p className="text-lg text-gray-700">TikToks Watched (180 days)</p>
@@ -42,8 +45,12 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
           <p className="text-lg text-gray-700">TikToks Liked</p>
         </div>
         <div className="bg-teal-50 p-4 rounded-lg text-center">
-          <p className="text-xl font-semibold text-gray-700">{Math.round(averageDailyCount).toLocaleString('fi-FI')}</p>
+          <p className="text-xl font-semibold text-teal-500">{Math.round(averageDailyCount).toLocaleString('fi-FI')}</p>
           <p className="text-lg text-gray-700">TikToks Watched Daily (Avg)</p>
+        </div>
+        <div className="bg-purple-50 p-4 rounded-lg text-center">
+          <p className="text-xl font-semibold text-purple-500">{watchTime.hours}h {watchTime.minutes}min</p>
+          <p className="text-lg text-gray-700">Total Time Spent Watching TikToks</p>
         </div>
       </div>
       <div className="mt-8">
