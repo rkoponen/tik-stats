@@ -1,16 +1,11 @@
 'use client'
-import Image from 'next/image'
-import { parse } from 'path';
 import { useState, useEffect } from 'react';
 import { ParsedData, VideoBrowsingHistoryItem, VideoLikeHistoryItem} from './types/jsonInterfaces';
-import { json } from 'stream/consumers';
-import BarChart from './components/barChart';
 import type { BarChartProps } from './components/barChart';
 import JSZip from 'jszip';
 import { DateCountArray } from './types/dateCountArray';
 import { calculateTotalCount, getMaxViews, reverseData } from './utils/dataUtils';
 import { computeDailyCounts, getEarliestMonth, getLatestMonth, getMonthlyData } from './utils/dateUtils';
-import { ChartOptions } from 'chart.js';
 import { StatsWidget } from './components/statsWidget';
 import { Months } from './types/months';
 
@@ -45,6 +40,10 @@ export default function Home() {
       }
     }
   }, [videoHistory])
+
+  useEffect(() => {
+    console.log(files)
+  }, [files])
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
