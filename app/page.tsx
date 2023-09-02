@@ -1,50 +1,17 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { ParsedData, VideoBrowsingHistoryItem, VideoLikeHistoryItem} from './types/jsonInterfaces';
-import type { BarChartProps } from './components/barChart';
 import JSZip from 'jszip';
-import { DateCountArray } from './types/dateCountArray';
-import { calculateTotalCount, calculateWatchTime, getMaxViews, reverseData } from './utils/dataUtils';
-import { computeDailyCounts, getEarliestMonth, getLatestMonth, getMonthlyData } from './utils/dateUtils';
 import { StatsWidget } from './components/statsWidget';
-import { Months } from './types/months';
+
+export type WatchData = {
+  watchHistory: VideoBrowsingHistoryItem[];
+  likeHistory: VideoLikeHistoryItem[];
+}
 
 export default function Home() {
-  const [files, setFiles] = useState<ParsedData | null>(null);
-  const [videoHistory, setVideoHistory] = useState<VideoBrowsingHistoryItem[] | null>(null);
-  const [likeList, setLikeList] = useState<VideoLikeHistoryItem[] | null>(null);
-  const [chartData, setChartData] = useState<BarChartProps['data'] | null>(null)
-  const [averageDailyCount, setAverageDailyCount] = useState<number | null>(null);
-  const [month, setMonth] = useState<number | null>(null);
-  const [dailyCounts, setDailyCounts] = useState<DateCountArray | null>(null);
-  const [earliestMonth, setEarliestMonth] = useState<number | null>(null);
-  const [latestMonth, setLatestMonth] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (videoHistory) {
-      const dailyCounts = computeDailyCounts(videoHistory);
-      if (dailyCounts) {
-        setDailyCounts(dailyCounts)
-        const totalCount = calculateTotalCount(dailyCounts);
-        const averageCount = totalCount / dailyCounts.length;
-        const latestMonth = getLatestMonth(dailyCounts);
-        getMaxViews(dailyCounts)
-        setAverageDailyCount(averageCount)
-        if (latestMonth) {
-          setMonth(latestMonth);
-          setLatestMonth(latestMonth);
-          setEarliestMonth(getEarliestMonth(dailyCounts))
-          const monthlyData = getMonthlyData(dailyCounts, latestMonth);
-          updateChartData(monthlyData, latestMonth)
-        }
-        calculateWatchTime(videoHistory);
-      }
-    }
-  }, [videoHistory])
-
-  useEffect(() => {
-    console.log(files)
-  }, [files])
+  const [watchData, setWatchData] = useState<WatchData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -55,63 +22,21 @@ export default function Home() {
 
       zip.forEach((relativePath, zipEntry) => {
         zipEntry.async('text').then((content) => {
-          const jsonData: ParsedData = JSON.parse(content);
-          if ("Activity" in jsonData) {
-            setFiles(jsonData);
-            setVideoHistory(jsonData["Activity"]["Video Browsing History"].VideoList.map((item) => ({...item, Date: new Date(item.Date)})))
-            setLikeList(jsonData["Activity"]["Like List"].ItemFavoriteList)
-          } else {
-            console.log("Invalid json")
+          try {
+            const jsonData: ParsedData = JSON.parse(content);
+            if ("Activity" in jsonData) {
+              const watchHistory = jsonData["Activity"]["Video Browsing History"].VideoList.map((item) => ({...item, Date: new Date(item.Date)}))
+              const likeHistory = jsonData["Activity"]["Like List"].ItemFavoriteList;
+              setWatchData({ watchHistory: watchHistory, likeHistory: likeHistory})
+              setError(null);
+            }
+          } catch {
+            setError("Error parsing JSON data. Please upload a valid JSON file.")
           }
         })
       })
-    }
-  }
-
-
-
-  const updateChartData = (data: DateCountArray, month: number) => {
-    const dates = data.map(pair => pair.date.toLocaleDateString('fi-FI'));
-    const counts = data.map(pair => pair.count);
-    
-    setChartData({
-      labels: dates,
-      datasets: [
-        {
-          label: Months[month],
-          data: counts,
-          backgroundColor: '#ec4899',
-          borderColor: "black",
-          borderWidth: 0,
-        }
-      ],
-    },
-    );
-  }
-
-  const handleClickPrevious = (e: React.MouseEvent<HTMLElement>) => {
-    if (month !== null && month > 0) {
-      setMonth(month - 1);
-      if (videoHistory) {
-        const dailyCounts = computeDailyCounts(videoHistory);
-        if (dailyCounts) {
-          const monthlyData = getMonthlyData(dailyCounts, month - 1);
-          updateChartData(monthlyData, month - 1);
-        }
-      }
-    }
-  }
-
-  const handleClickNext = (e: React.MouseEvent<HTMLElement>) => {
-    if (month !== null && month < 11) {
-      setMonth(month + 1);
-      if (videoHistory) {
-        const dailyCounts = computeDailyCounts(videoHistory);
-        if (dailyCounts) {
-          const monthlyData = getMonthlyData(dailyCounts, month + 1);
-          updateChartData(monthlyData, month + 1);
-        }
-      }
+    } else {
+      setError('Invalid file type. Please upload a .zip file.')
     }
   }
 
@@ -128,20 +53,17 @@ export default function Home() {
             onChange={handleFileChange} />
           <p className="mt-1 mb-6 text-sm text-gray-500" id="file_input_help">Upload the ZIP file containing your TikTok data.</p>
         </div>
-        {videoHistory && likeList && chartData && averageDailyCount && month && dailyCounts && earliestMonth && latestMonth && (
+        {watchData && (
           <StatsWidget
-            videoHistory={videoHistory}
-            likeList={likeList}
-            averageDailyCount={averageDailyCount}
-            month={month}
-            chartData={chartData}
-            maxVal={getMaxViews(dailyCounts)}
-            handleClickPrevious={handleClickPrevious}
-            handleClickNext={handleClickNext}
-            earliestMonth={earliestMonth}
-            latestMonth={latestMonth}
+            watchData={watchData}
           />
         )}
+        {error && (
+          <div className="bg-red-200 rounded-lg p-4 text-center">
+            <p className="text-red-800">{error}</p>
+          </div>
+        )
+        }
       </div>
     </main>
 
