@@ -82,16 +82,16 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
   return (
     <div>
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Your TikTok Stats</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Your TikTok Stats (past 180 days)</h2>
       </div>
       <div className="grid gap-4 md:grid-cols-4">
         <div className="bg-blue-50 p-4 rounded-lg text-center">
           <p className="text-xl font-semibold text-blue-500">{watchHistory.length.toLocaleString('fi-FI')}</p>
-          <p className="text-lg text-gray-700">TikToks Watched (180 days)</p>
+          <p className="text-lg text-gray-700">TikToks Watched</p>
         </div>
         <div className="bg-pink-50 p-4 rounded-lg text-center">
           <p className="text-xl font-semibold text-pink-500">{likeHistory.length.toLocaleString('fi-FI')}</p>
-          <p className="text-lg text-gray-700">TikToks Liked</p>
+          <p className="text-lg text-gray-700">TikToks Liked (all time)</p>
         </div>
         <div className="bg-teal-50 p-4 rounded-lg text-center">
           <p className="text-xl font-semibold text-teal-500">{Math.round(averageDailyCount).toLocaleString('fi-FI')}</p>

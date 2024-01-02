@@ -87,7 +87,7 @@ export default function Home() {
           </div>
           <button
             onClick={handleClick}
-            className="bg-green-500 hover:bg-green-700 text-white text-sm font-bold py-2 px-4 rounded-full w-1/2 sm:w-40"
+            className="bg-green-500 hover:bg-green-700 text-white text-sm font-bold py-2 px-4 rounded-full w-full sm:w-40"
           >
             Try with demo data
           </button>
@@ -106,7 +106,7 @@ export default function Home() {
             type="file"
             onChange={handleFileChange}
           />
-          <p className="mt-1 mb-6 text-sm text-gray-500" id="file_input_help">
+          <p className="mt-1 mb-6 w-full sm:w-3/4 text-sm text-gray-500" id="file_input_help">
             Upload the ZIP file containing your TikTok data, which can be
             downloaded from TikTok Settings and privacy -{">"} Account -{">"} Download
             your data -{">"} Select file format -{">"} JSON
